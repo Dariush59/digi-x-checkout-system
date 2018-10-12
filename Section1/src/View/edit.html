@@ -1,0 +1,63 @@
+<html>
+<head>
+    <title>Form</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+        <div class="alert alert-success" role="alert">
+            <strong>Well done!</strong> It has successfully updated.
+        </div>
+        <form>
+            <label for="name"> Name: </label>
+            <input type="text" name="name" id="name"><br>
+            <label for="age" > Age: </label>
+            <input type="text" name="age" id="age"><br>
+            <label for="job"> Job: </label>
+            <input type="text" name="job" id="job"><br>
+            <input type="hidden" name="id" id="id">
+            <input id="updata" type="submit" class="btn btn-primary" value="Update">
+        </form>
+    </div>
+
+
+    <script>
+        $(function(){
+            $('.alert').hide();
+            $.get("http://localhost:5050/get.php?id=" + window.location.pathname.split('/')[2], function(data, status){
+                $('#id').val(data.id);
+                $('#name').val(data.name);
+                $('#age').val(data.age);
+                $('#job').val(data.job);
+            });
+        });
+
+        $('#updata').click(function (event) {
+            event.preventDefault();
+            var data = $("form").serializeArray();
+            $.ajax({
+                url: 'http://localhost:5050/put.php',
+                type: 'PUT',
+                data: data,
+                success: function(result) {
+                    $('.alert').show();
+                    setTimeout(function(){
+                        window.location.href = "../list.html";
+                    }, 2000)
+                }
+            });
+        });
+    </script>
+</body>
+</html>
