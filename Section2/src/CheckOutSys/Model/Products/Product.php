@@ -8,41 +8,54 @@
 
 namespace CheckOutSys\Model\Products;
 
-use CheckOutSys\Model\Products\ProductInterface;
+//use CheckOutSys\Model\Products\ProductAbstract;
 
-class Product implements ProductInterface
+use CheckOutSys\Model\Products\BaseProduct\ProductAbstract;
+
+/**
+ * Class Product
+ * @package CheckOutSys\Model\Products
+ */
+class Product extends ProductAbstract
 {
-    public $product;
-    public function __construct(string $sku){
-        $this->product = $this->search(json_decode(file_get_contents(__DIR__ . "/../data.json")), $sku);
+    /**
+     * Product constructor.
+     * @param string $sku
+     * @throws \Exception
+     */
+    function __construct(string $sku){
+        parent::__construct($sku);
     }
 
-    function search(array $data, string $sku) {
-        foreach ($data as $item)
-        {
-            if ($item->sku == $sku)
-                return $item;
-        }
-        return null;
-    }
-
-    public function getPrice()
+    /**
+     * @return float|null
+     */
+    public function getPrice() : ?float
     {
-        return $this->product->price;
+        return $this->product->price ?? null;
     }
 
-    public function getName()
+    /**
+     * @return null|string
+     */
+    public function getName() : ?string
     {
-        return $this->product->name;
+        return $this->product->name ?? null;
     }
 
-    public function getSku()
+    /**
+     * @return null|string
+     */
+    public function getSku() : ?string
     {
-        return $this->product->sku;
+        return $this->product->sku ?? null;
     }
 
-    public function getId()
+    /**
+     * @return null|string
+     */
+    public function getId() : ?string
     {
-        return $this->product->id;
+        return $this->product->id ?? null;
     }
 }

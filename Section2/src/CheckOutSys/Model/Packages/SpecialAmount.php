@@ -9,30 +9,48 @@
 namespace CheckOutSys\Model\Packages;
 
 
-use CheckOutSys\Handler\Filter;
-use function count;
+use CheckOutSys\Model\Filters\Filter;
+use CheckOutSys\Model\Filters\Policies\Policy;
+use CheckOutSys\Model\Packages\BasePricingRule\PricingRuleInterface;
+use CheckOutSys\Model\Products\Product;
 use function var_dump;
 
+/**
+ * Class SpecialAmount
+ * @package CheckOutSys\Model\Packages
+ */
 class SpecialAmount implements PricingRuleInterface
 {
+    /**
+     * @var array
+     */
     protected $item = [];
+    /**
+     * @var array
+     */
     protected $grossAmount = [];
-    protected $notification = '';
 
-    public function scan($item)
+    /**
+     * @param Product $item
+     */
+    public function scan(Product $item) : void
     {
-        $this->item[$item->sku][] = $item->price;
-        $this->grossAmount[] = $item->price;
+        $this->item[$item->getSku()][] = $item->getPrice();
+        $this->grossAmount[] = $item->getPrice();
     }
 
-    public function total(Filter $filter)
+    /**
+     * @param Filter|null $filter
+     * @return array
+     * @throws \Exception
+     */
+    public function total(Filter $filter = null) : array
     {
+        $filter->register($this->item);
         $reduced = [];
-//        $totalQty = count($this->item,1) - count($this->item);
-        $totalQty = count($this->grossAmount) ?? 0;
-        $reduced[] = $filter->three​For​TwoDeal($this->item, 'atv');
-        $reduced[] = $filter->discountAfterBuying($totalQty, $this->item, 'ipd', 50, 4);
-        $reduced[] = $filter->​free​Of​Charge​($this->item, 'mbp','vga');
+        $reduced[] = $filter->three​For​TwoDeal();
+        $reduced[] = $filter->discountAfterBuying();
+        $reduced[] = $filter->​free​Of​Charge​();
         foreach ( array_keys($this->item) as $key)
             $skus[$key] = count($this->item[$key]);
 

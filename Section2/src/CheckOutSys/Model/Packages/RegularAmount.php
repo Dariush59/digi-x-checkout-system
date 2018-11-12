@@ -9,20 +9,37 @@
 namespace CheckOutSys\Model\Packages;
 
 
-use CheckOutSys\Handler\Filter;
 
+use CheckOutSys\Model\Filters\Filter;
+use CheckOutSys\Model\Filters\Policies\Policy;
+use CheckOutSys\Model\Packages\BasePricingRule\PricingRuleInterface;
+
+/**
+ * Class RegularAmount
+ * @package CheckOutSys\Model\Packages
+ */
 class RegularAmount implements PricingRuleInterface
 {
+    /**
+     * @var array
+     */
     protected $item = [];
 
-    public function scan($item)
+    /**
+     * @param \CheckOutSys\Model\Products\Product $item
+     */
+    public function scan($item) : void
     {
-        $this->item['sku'][] = $item->sku;
-        $this->item['price'][] = $item->price;
+        $this->item['sku'][] = $item->getSku();
+        $this->item['price'][] = $item->getPrice();
     }
 
-    public function total(Filter $filter)
+    /**
+     * @param Filter|null $filter
+     * @return array
+     */
+    public function total(?Filter $filter = null) : array
     {
-        return array_sum($this->item['price']);
+        return ["net" => array_sum($this->item['price']), "SKUs"=>$this->item['sku']];
     }
 }
